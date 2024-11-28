@@ -3,8 +3,6 @@ import 'package:learn_lingo/core/theme/typography.dart';
 import 'package:learn_lingo/features/Talk-AI/talk_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:speech_to_text/speech_recognition_result.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 class TalkPage extends StatefulWidget {
   const TalkPage({super.key});
@@ -14,125 +12,85 @@ class TalkPage extends StatefulWidget {
 }
 
 class _TalkPageState extends State<TalkPage> {
-  final SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
-  String _lastWords = '';
-  String _resultAiWord = '';
-
   @override
   void initState() {
     super.initState();
-    _initializeSpeechToText();
-  }
-
-  Future<void> _initializeSpeechToText() async {
-    _speechEnabled = await _speechToText.initialize();
-    setState(() {});
-  }
-
-  Future<void> _sendDataAI() async {
-    if (_lastWords.isEmpty) return;
-
-    final talkAiProvider = Provider.of<TalkProvider>(context, listen: false);
-    await talkAiProvider.talkAiGen(_lastWords);
-
-    setState(() {
-      _resultAiWord = talkAiProvider.talkAiApi!.answer!;
-    });
-  }
-
-  void _startListening() async {
-    if (_speechEnabled) {
-      await _speechToText.listen(onResult: _onSpeechResult);
-      setState(() {});
-    }
-  }
-
-  void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {});
-  }
-
-  void _onSpeechResult(SpeechRecognitionResult result) {
-    setState(() {
-      _lastWords = result.recognizedWords;
-      if (result.finalResult) {
-        _sendDataAI();
-      }
-    });
+    final talkProvider = Provider.of<TalkProvider>(context, listen: false);
+    talkProvider.initializeSpeech();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Warna.primary3,
-          iconTheme: const IconThemeData(color: Warna.primary1),
-          title: Tipografi()
-              .s1(isiText: 'Talk With AI', warnaFont: Warna.primary1),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-          child: Column(
-            children: [
-              ListView.builder(
-                itemCount: 3,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final talk = context.read<TalkProvider>();
-                  if (index == 0) {
-                    if (talk.isLoading) {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
+      appBar: AppBar(
+        backgroundColor: Warna.primary3,
+        iconTheme: const IconThemeData(color: Warna.primary1),
+        title:
+            Tipografi().s1(isiText: 'Talk With AI', warnaFont: Warna.primary1),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+        child: Consumer<TalkProvider>(
+          builder: (context, talkProvider, _) {
+            return Column(
+              children: [
+                ListView.builder(
+                  itemCount: 3,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      if (talkProvider.isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return messageBox(context, talkProvider.resultAiWord,
+                          CrossAxisAlignment.start, 'Gen-AI');
+                    } else if (index == 1) {
+                      return messageBox(context, talkProvider.lastWords,
+                          CrossAxisAlignment.end, 'Me');
+                    } else {
+                      return const SizedBox.shrink();
                     }
-                    return messageBox(context, _resultAiWord,
-                        CrossAxisAlignment.start, 'Gen-AI');
-                  } else if (index == 1) {
-                    return messageBox(
-                        context, _lastWords, CrossAxisAlignment.end, 'Me');
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  _buildCircleButton(
-                    icon: Icons.restart_alt,
-                    size: 25,
-                    tinggi: 0.15,
-                    lebar: 0.15,
-                    onPressed: () {
-                      setState(() {
-                        _lastWords = '';
-                        _resultAiWord = '';
-                      });
-                    },
-                  ),
-                  _buildCircleButton(
-                    icon: _speechToText.isNotListening
-                        ? Icons.mic_off
-                        : Icons.mic,
-                    size: 25,
-                    tinggi: 0.15,
-                    lebar: 0.15,
-                    onPressed: _speechToText.isNotListening
-                        ? _startListening
-                        : _stopListening,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ));
+                  },
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _buildCircleButton(
+                      context,
+                      icon: Icons.restart_alt,
+                      size: 25,
+                      tinggi: 0.15,
+                      lebar: 0.15,
+                      onPressed: talkProvider.reset,
+                    ),
+                    _buildCircleButton(context,
+                        icon: talkProvider.isListening
+                            ? Icons.mic
+                            : Icons.mic_off,
+                        size: 25,
+                        tinggi: 0.15,
+                        lebar: 0.15, onPressed: () {
+                      if (talkProvider.isListening) {
+                        talkProvider.startListening();
+                      } else {
+                        talkProvider.stopListening();
+                      }
+                    }),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
 
-  Widget _buildCircleButton({
+  Widget _buildCircleButton(
+    BuildContext context, {
     required IconData icon,
     required double size,
     required VoidCallback onPressed,
