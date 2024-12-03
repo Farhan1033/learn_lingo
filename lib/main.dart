@@ -23,7 +23,6 @@ import 'package:learn_lingo/features/Talk-AI/talk_provider.dart';
 import 'package:learn_lingo/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'features/login/login_state.dart';
 import 'features/login/login_provider.dart';
 import 'features/login/login_page.dart';
 
@@ -38,7 +37,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => LoginState()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => CourseProvider()),

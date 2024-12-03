@@ -1,6 +1,5 @@
 import 'package:learn_lingo/core/theme/color_primary.dart';
 import 'package:learn_lingo/features/login/login_provider.dart';
-import 'package:learn_lingo/features/login/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,10 +11,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  bool _keamanan = true;
-
   Widget textArea(
       {required TextEditingController editingController,
       bool keamanan = false,
@@ -42,11 +37,12 @@ class _LoginPageState extends State<LoginPage> {
             border:
                 OutlineInputBorder(borderRadius: BorderRadius.circular(8))));
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<LoginState>(
-        builder: (context, loginState, child) {
+      body: Consumer<LoginProvider>(
+        builder: (context, loginProvider, _) {
           return SingleChildScrollView(
             child: SizedBox(
               height: MediaQuery.of(context).size.height,
@@ -77,24 +73,24 @@ class _LoginPageState extends State<LoginPage> {
                       height: 15,
                     ),
                     textArea(
-                        editingController: emailController,
+                        editingController: loginProvider.emailController,
                         iconIsi: const Icon(Icons.email),
                         textIsi: "Email"),
                     const SizedBox(
                       height: 15,
                     ),
                     textArea(
-                        editingController: passwordController,
+                        editingController: loginProvider.passwordController,
                         iconIsi: const Icon(Icons.key),
-                        keamanan: _keamanan,
+                        keamanan: loginProvider.keamananPass,
                         textIsi: "Password",
                         iconBelakang: IconButton(
                             onPressed: () {
                               setState(() {
-                                _keamanan = !_keamanan;
+                                loginProvider.toggleKeamananPass();
                               });
                             },
-                            icon: Icon(_keamanan
+                            icon: Icon(loginProvider.keamananPass
                                 ? Icons.remove_red_eye
                                 : Icons.visibility_off))),
                     const SizedBox(
@@ -116,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(
                       height: 15,
                     ),
-                    if (loginState.isLoading)
+                    if (loginProvider.isLoading)
                       const CircularProgressIndicator()
                     else
                       ElevatedButton(
@@ -126,8 +122,9 @@ class _LoginPageState extends State<LoginPage> {
                             fixedSize: WidgetStatePropertyAll(
                                 Size(double.maxFinite, 51))),
                         onPressed: () {
-                          final email = emailController.text;
-                          final password = passwordController.text;
+                          final email = loginProvider.emailController.text;
+                          final password =
+                              loginProvider.passwordController.text;
                           Provider.of<LoginProvider>(context, listen: false)
                               .login(context, email, password);
                         },
@@ -140,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                               fontWeight: FontWeight.w500),
                         ),
                       ),
-                    if (loginState.hasError)
+                    if (loginProvider.hasError)
                       const Text("Login failed",
                           style: TextStyle(color: Colors.red)),
                     const SizedBox(
@@ -159,7 +156,8 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         TextButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(context, '/register');
+                              Navigator.pushReplacementNamed(
+                                  context, '/register');
                             },
                             child: const Text(
                               "Daftar",
