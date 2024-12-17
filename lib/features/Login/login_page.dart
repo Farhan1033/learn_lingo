@@ -1,5 +1,5 @@
 import 'package:learn_lingo/core/theme/color_primary.dart';
-import 'package:learn_lingo/features/login/login_provider.dart';
+import 'package:learn_lingo/features/Login/login_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

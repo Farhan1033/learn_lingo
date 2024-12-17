@@ -23,8 +23,8 @@ import 'package:learn_lingo/features/Talk-AI/talk_provider.dart';
 import 'package:learn_lingo/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'features/login/login_provider.dart';
-import 'features/login/login_page.dart';
+import 'package:learn_lingo/features/Login/login_provider.dart';
+import 'package:learn_lingo/features/Login/login_page.dart';
 
 void main() {
   runApp(const MyApp());

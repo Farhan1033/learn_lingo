@@ -8,8 +8,20 @@ class CourseProvider with ChangeNotifier {
   CourseApi? _courses;
   bool _isLoading = false;
   String? _errorMessage;
-  final List<String> _categories = ['beginner', 'advanced', 'intermediate'];
-  String _categoryCourse = 'beginner';
+  final List<String> _displayedCategories = [
+    'Bab 1 - 3',
+    'Bab 4 - 6',
+    'Bab 7 - 9'
+  ];
+
+  // Mapping displayed categories to API categories
+  final Map<String, String> _apiCategories = {
+    'Bab 1 - 3': 'beginner',
+    'Bab 4 - 6': 'advanced',
+    'Bab 7 - 9': 'intermediate'
+  };
+
+  String? _categoryCourse = 'Bab 1 - 3';
   String _idCourses = '';
 
   set categoryCourse(String? newCategory) {
@@ -23,8 +35,11 @@ class CourseProvider with ChangeNotifier {
   CourseApi? get course => _courses;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
-  List<String> get categories => _categories;
-  String get categoryCourse => _categoryCourse;
+  List<String> get categories => _displayedCategories;
+  String? get categoryCourse => _categoryCourse;
+
+  // Get API category from displayed category
+  String? get categoryForApi => _apiCategories[_categoryCourse];
 
   void setIdCourses(String id) {
     _idCourses = id;
@@ -37,7 +52,7 @@ class CourseProvider with ChangeNotifier {
     try {
       final token = await Token().getToken();
       final fetchedCourse =
-          await _courseService.courses(categoryCourses, token ?? 'Token nnull');
+          await _courseService.courses(categoryCourses, token ?? 'Token null');
       if (fetchedCourse != null) {
         _courses = fetchedCourse;
       } else {

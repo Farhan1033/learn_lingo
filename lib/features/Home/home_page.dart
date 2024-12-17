@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
       Provider.of<HomeProvider>(context, listen: false).gamifikasi();
       Provider.of<HomeProvider>(context, listen: false).progressLesson();
       final course = Provider.of<CourseProvider>(context, listen: false);
-      course.fetchCourse(course.categoryCourse);
+      course.fetchCourse(course.categoryForApi ?? "beginner");
     });
     return Scaffold(
       body: Consumer<HomeProvider>(
@@ -173,15 +173,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationIcon() {
-    return Container(
-      height: 44.0,
-      width: 44.0,
-      decoration:
-          const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-      child: const Icon(Icons.notifications, color: Warna.primary3),
-    );
-  }
+  // Widget _buildNotificationIcon() {
+  //   return Container(
+  //     height: 44.0,
+  //     width: 44.0,
+  //     decoration:
+  //         const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+  //     child: const Icon(Icons.notifications, color: Warna.primary3),
+  //   );
+  // }
 
   Widget _buildUserProfileRow() {
     return Row(
@@ -264,8 +264,10 @@ class HomePage extends StatelessWidget {
                     children: [
                       _buildOngoingLabel(label),
                       const SizedBox(height: 5.0),
-                      Tipografi().s1(
-                          isiText: title,
+                      Tipografi().s2(
+                          isiText: percentProgress == 0
+                              ? "You haven't started the course"
+                              : title,
                           warnaFont: Warna.netral1,
                           oververFlow: TextOverflow.ellipsis,
                           maxLines: 2)
@@ -286,8 +288,10 @@ class HomePage extends StatelessWidget {
                         children: [
                           _buildOngoingLabel(label),
                           const SizedBox(height: 5.0),
-                          Tipografi().s1(
-                              isiText: title,
+                          Tipografi().s2(
+                              isiText: percentProgress == 0
+                                  ? "You haven't started the course"
+                                  : title,
                               warnaFont: Warna.netral1,
                               oververFlow: TextOverflow.ellipsis,
                               maxLines: 2)
@@ -375,8 +379,8 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSearchField(),
-          const SizedBox(height: 30),
+          // _buildSearchField(),
+          // const SizedBox(height: 30),
           _buildLearningChoices(context),
           const SizedBox(height: 10),
           _buildChoiceAI(context),
@@ -393,16 +397,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchField() {
-    return TextFormField(
-      decoration: InputDecoration(
-        hintText: "Mau Belajar Apa Sekarang?",
-        hintStyle: const TextStyle(color: Warna.primary3, fontSize: 14.0),
-        prefixIcon: const Icon(Icons.search, color: Warna.primary3),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-      ),
-    );
-  }
+  // Widget _buildSearchField() {
+  //   return TextFormField(
+  //     decoration: InputDecoration(
+  //       hintText: "Mau Belajar Apa Sekarang?",
+  //       hintStyle: const TextStyle(color: Warna.primary3, fontSize: 14.0),
+  //       prefixIcon: const Icon(Icons.search, color: Warna.primary3),
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+  //     ),
+  //   );
+  // }
 
   Widget _buildLearningChoices(BuildContext context) {
     return Container(

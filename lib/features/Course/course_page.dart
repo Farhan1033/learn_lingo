@@ -31,7 +31,7 @@ class _CoursePageState extends State<CoursePage> {
 
   void _fetchCourseData() {
     final courseProvider = Provider.of<CourseProvider>(context, listen: false);
-    courseProvider.fetchCourse(courseProvider.categoryCourse);
+    courseProvider.fetchCourse(courseProvider.categoryForApi!);
   }
 
   @override
@@ -74,17 +74,25 @@ class _CoursePageState extends State<CoursePage> {
                     );
                   }
                   if (courseProvider.course != null) {
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildHeader(courseProvider),
-                          const SizedBox(
-                            height: 15,
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        await Future.delayed(const Duration(seconds: 2));
+                        _fetchCourseData();
+                      },
+                      child: SingleChildScrollView(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildHeader(courseProvider),
+                              const SizedBox(
+                                height: 15,
+                              ),
+                              _buildLessonList(courseProvider)
+                            ],
                           ),
-                          _buildLessonList(courseProvider)
-                        ],
+                        ),
                       ),
                     );
                   }
@@ -184,7 +192,7 @@ class _CoursePageState extends State<CoursePage> {
               .map<DropdownMenuItem<String>>((String category) {
             return DropdownMenuItem<String>(
               value: category,
-              child: Text(category[0].toUpperCase() + category.substring(1)),
+              child: Text(category),
             );
           }).toList(),
         );
