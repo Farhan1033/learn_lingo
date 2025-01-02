@@ -7,6 +7,10 @@ import 'package:learn_lingo/features/Check%20Grammar/check_grammar_provider.dart
 import 'package:learn_lingo/features/Course/course_page.dart';
 import 'package:learn_lingo/features/Course/course_provider.dart';
 import 'package:learn_lingo/features/Daily-Event/daily_page.dart';
+import 'package:learn_lingo/features/Forgot%20Password/forgot_password_page.dart';
+import 'package:learn_lingo/features/Forgot%20Password/forgot_password_provider.dart';
+import 'package:learn_lingo/features/Forgot%20Password/generate_otp_page.dart';
+import 'package:learn_lingo/features/Forgot%20Password/generate_otp_provider.dart';
 import 'package:learn_lingo/features/Home/home_page.dart';
 import 'package:learn_lingo/features/Home/home_provider.dart';
 import 'package:learn_lingo/features/Lesson%20Exercise/excercise_page.dart';
@@ -20,6 +24,8 @@ import 'package:learn_lingo/features/Register/register_page.dart';
 import 'package:learn_lingo/features/Register/register_provider.dart';
 import 'package:learn_lingo/features/Reward/reward_provider.dart';
 import 'package:learn_lingo/features/Talk-AI/talk_provider.dart';
+import 'package:learn_lingo/features/Verify-OTP/verify_page.dart';
+import 'package:learn_lingo/features/Verify-OTP/verify_provider.dart';
 import 'package:learn_lingo/wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +55,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RewardProvider()),
         ChangeNotifierProvider(create: (_) => CheckGrammarProvider()),
         ChangeNotifierProvider(create: (_) => ChatAiProvider()),
+        ChangeNotifierProvider(create: (_) => VerifyProvider()),
+        ChangeNotifierProvider(create: (_) => GenerateOtpProvider()),
+        ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
       ],
       child: MaterialApp(
         initialRoute: '/',
@@ -64,7 +73,10 @@ class MyApp extends StatelessWidget {
           '/daily-event': (context) => const DailyPage(),
           '/wrapper': (context) => const Wrapper(),
           '/check-grammar': (context) => const CheckGrammarPage(),
-          '/chat-ai': (context) => const ChatAiPage()
+          '/chat-ai': (context) => const ChatAiPage(),
+          '/verificationOTP': (context) => const VerifyPage(),
+          '/generate-otp': (context) => const GenerateOtpPage(),
+          '/forgot-password': (context) => const ForgotPasswordPage(),
         },
         debugShowCheckedModeBanner: false,
         home: const AuthCheck(),

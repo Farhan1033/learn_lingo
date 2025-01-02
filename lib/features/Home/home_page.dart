@@ -120,7 +120,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(
               width: 20,
             ),
-            // _buildNotificationIcon()
+            _buildNotificationIcon()
           ],
         )
       ],
@@ -173,15 +173,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Widget _buildNotificationIcon() {
-  //   return Container(
-  //     height: 44.0,
-  //     width: 44.0,
-  //     decoration:
-  //         const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-  //     child: const Icon(Icons.notifications, color: Warna.primary3),
-  //   );
-  // }
+  Widget _buildNotificationIcon() {
+    return Container(
+      height: 44.0,
+      width: 44.0,
+      decoration:
+          const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+      child: const Icon(Icons.notifications, color: Warna.primary3),
+    );
+  }
 
   Widget _buildUserProfileRow() {
     return Row(

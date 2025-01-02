@@ -111,10 +111,13 @@ class LoginProvider with ChangeNotifier {
       );
     } finally {
       setLoading(false);
+      clear();
     }
   }
 
   void clear() {
+    emailController.clear();
+    passwordController.clear();
     _isLoading = false;
     _hasError = false;
     _loginData = null;

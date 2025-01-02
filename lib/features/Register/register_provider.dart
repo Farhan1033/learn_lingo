@@ -97,19 +97,10 @@ class RegisterProvider with ChangeNotifier {
           await _registerModel.registerAPI(username, email, password);
       if (registerData != null) {
         _registerApi = registerData;
-        print(registerData.username);
-        await _token
-            .saveName(registerData.username ?? 'Username Tidak Ditemukan');
+        print(registerData.email);
+        await _token.saveName(registerData.email ?? 'Email tidak ditemukan');
         // ignore: use_build_context_synchronously
-        Navigator.pushReplacementNamed(context, '/login');
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Registrasi berhasil!"),
-            backgroundColor: Warna.benar,
-          ),
-        );
-        clearData();
+        Navigator.pushReplacementNamed(context, '/verificationOTP');
       } else {
         _errorMessage = 'Gagal mendaftarkan akun';
         // ignore: use_build_context_synchronously
@@ -132,6 +123,7 @@ class RegisterProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+      clearData();
     }
   }
 

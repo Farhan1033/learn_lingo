@@ -99,7 +99,10 @@ class _LoginPageState extends State<LoginPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                                context, '/generate-otp');
+                          },
                           child: const Text(
                             "Lupa Password?",
                             style: TextStyle(
