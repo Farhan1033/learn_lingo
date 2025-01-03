@@ -23,72 +23,80 @@ class RewardPage extends StatelessWidget {
         title:
             Tipografi().s1(isiText: 'Reward Page', warnaFont: Warna.primary1),
       ),
-      body: SingleChildScrollView(
-        child: Consumer<RewardProvider>(
-          builder: (context, rewardProvider, _) {
-            if (rewardProvider.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (rewardProvider.hasError != null) {
-              return const Center(child: Text('Database not found!'));
-            }
-            if (rewardProvider.rewardApi == null) {
-              return const Center(child: Text('Data not found!'));
-            }
-            final item = rewardProvider.rewardApi!.data;
-            return Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    child: Tipografi().h6(
-                        isiText: 'Tukarkan Poin Anda Sekarang Juga',
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 2));
+          context.read<RewardProvider>().reward();
+        },
+        child: SingleChildScrollView(
+          child: Consumer<RewardProvider>(
+            builder: (context, rewardProvider, _) {
+              if (rewardProvider.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (rewardProvider.hasError != null) {
+                return const Center(child: Text('Database not found!'));
+              }
+              if (rewardProvider.rewardApi == null) {
+                return const Center(child: Text('Data not found!'));
+              }
+              final item = rewardProvider.rewardApi!.data;
+              return Container(
+                width: MediaQuery.of(context).size.width,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Tipografi().h6(
+                          isiText: 'Tukarkan Poin Anda Sekarang Juga',
+                          warnaFont: Warna.netral1),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    _buildMyPoin(context),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Tipografi()
+                        .h6(isiText: 'Pilih Hadiah', warnaFont: Warna.netral1),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Tipografi().b2(
+                        isiText:
+                            'Tukar hadiah sesuai jumlah poin yang tersedia',
                         warnaFont: Warna.netral1),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  _buildMyPoin(context),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Tipografi()
-                      .h6(isiText: 'Pilih Hadiah', warnaFont: Warna.netral1),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Tipografi().b2(
-                      isiText: 'Tukar hadiah sesuai jumlah poin yang tersedia',
-                      warnaFont: Warna.netral1),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: item!.length,
-                    itemBuilder: (context, index) {
-                      final listItem = item[index];
-                      final imagePaths = [
-                        'assets/images/help_icon.png',
-                        'assets/images/unlimited_hearts.png',
-                        'assets/images/double_exp.png',
-                      ];
-                      if (index < imagePaths.length) {
-                        return _buildReedemReward(
-                            context, listItem, imagePaths[index]);
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
-                  )
-                ],
-              ),
-            );
-          },
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: item!.length,
+                      itemBuilder: (context, index) {
+                        final listItem = item[index];
+                        final imagePaths = [
+                          'assets/images/help_icon.png',
+                          'assets/images/unlimited_hearts.png',
+                          'assets/images/double_exp.png',
+                        ];
+                        if (index < imagePaths.length) {
+                          return _buildReedemReward(
+                              context, listItem, imagePaths[index]);
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    )
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -223,20 +231,20 @@ class RewardPage extends StatelessWidget {
               teksTombol: 'Redeem',
               lebarTombol: double.infinity,
               navigasiTombol: () {
-                // context.read<RewardProvider>().showDialogRedeem(
-                //     context,
-                //     imageItems,
-                //     item.name ?? '',
-                //     item.points ?? 0,
-                //     item.description ?? '',
-                //     item.terms ?? '');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Maaf fitur masih dalam tahap pengembangan"),
-                    backgroundColor: Warna.salah,
-                    duration: Duration(seconds: 5),
-                  ),
-                );
+                context.read<RewardProvider>().showDialogRedeem(
+                    context,
+                    imageItems,
+                    item.name ?? '',
+                    item.points ?? 0,
+                    item.description ?? '',
+                    item.terms ?? '');
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //   const SnackBar(
+                //     content: Text("Maaf fitur masih dalam tahap pengembangan"),
+                //     backgroundColor: Warna.salah,
+                //     duration: Duration(seconds: 5),
+                //   ),
+                // );
               })
         ],
       ),

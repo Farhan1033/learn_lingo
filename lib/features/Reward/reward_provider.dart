@@ -1,4 +1,6 @@
+import 'package:learn_lingo/core/models/redeem_api.dart';
 import 'package:learn_lingo/core/models/reward_api.dart';
+import 'package:learn_lingo/core/service/redeem_models.dart';
 import 'package:learn_lingo/core/service/reward_models.dart';
 import 'package:learn_lingo/core/theme/button_app.dart';
 import 'package:learn_lingo/core/theme/color_primary.dart';
@@ -10,12 +12,18 @@ class RewardProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _hasError;
   RewardApi? _rewardApi;
-  final RewardModels _rewardModels = RewardModels();
+  RedeemApi? _redeemApi;
 
+  final RewardModels _rewardModels = RewardModels();
+  final RedeemModels _redeemModels = RedeemModels();
+
+  // Getter
   bool get isLoading => _isLoading;
   String? get hasError => _hasError;
   RewardApi? get rewardApi => _rewardApi;
+  RedeemApi? get redeemApi => _redeemApi;
 
+  // Setter
   void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
@@ -29,6 +37,62 @@ class RewardProvider with ChangeNotifier {
   void setReward(RewardApi? value) {
     _rewardApi = value;
     notifyListeners();
+  }
+
+  void setRedeem(RedeemApi? value) {
+    _redeemApi = value;
+    notifyListeners();
+  }
+
+  // Clean data
+  void cleanData() {
+    setError(null);
+    setReward(null);
+    setRedeem(null);
+  }
+
+  // Fetch rewards
+  Future<void> reward() async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      final token = await Token().getToken();
+      final rewardData =
+          await _rewardModels.rewardModels(token ?? 'Token Not Found!');
+      if (rewardData != null) {
+        setReward(rewardData);
+      } else {
+        setError('Failed to fetch rewards: No data returned.');
+      }
+    } catch (e) {
+      setError(e.toString());
+      cleanData();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Redeem reward
+  Future<void> redeem(String jenisReward) async {
+    setLoading(true);
+    setError(null);
+
+    try {
+      final token = await Token().getToken();
+      final redeemData = await _redeemModels.redeemReward(
+          token ?? 'Token Not Found!', jenisReward);
+      if (redeemData != null) {
+        setRedeem(redeemData);
+      } else {
+        setError('Failed to redeem reward: No data returned.');
+      }
+    } catch (e) {
+      setError(e.toString());
+      cleanData();
+    } finally {
+      setLoading(false);
+    }
   }
 
   Future<void> showDialogRedeem(BuildContext context, String imageItem,
@@ -102,44 +166,45 @@ class RewardProvider with ChangeNotifier {
           ),
           actions: [
             Tombol().TextLarge(
-                teksTombol: 'Tutup',
-                lebarTombol: double.infinity,
-                navigasiTombol: () {
-                  Navigator.pop(context);
-                }),
+              teksTombol: 'Tutup',
+              lebarTombol: double.infinity,
+              navigasiTombol: () {
+                Navigator.pop(context);
+              },
+            ),
             Tombol().primarySmall(
-                teksTombol: 'Redeem',
-                lebarTombol: double.infinity,
-                navigasiTombol: () {}),
+              teksTombol: 'Redeem',
+              lebarTombol: double.infinity,
+              navigasiTombol: () async {
+                await redeem(title).then((_) {
+                  if (hasError != null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content:
+                            Text(redeemApi?.message ?? 'Redeem successful'),
+                        backgroundColor: Warna.benar,
+                        duration: const Duration(seconds: 5),
+                      ),
+                    );
+                    reward();
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Not enough points to redeem reward'),
+                        backgroundColor: Warna.salah,
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                    reward();
+                    Navigator.pop(context);
+                  }
+                });
+              },
+            ),
           ],
         );
       },
     );
-  }
-
-  Future<void> reward() async {
-    setLoading(true);
-    setError(null);
-
-    try {
-      final token = await Token().getToken();
-      final rewardData =
-          await _rewardModels.rewardModels(token ?? 'Token Not Found!');
-      if (rewardData != null) {
-        setReward(rewardData);
-      } else {
-        setReward(null);
-      }
-    } catch (e) {
-      setError(e.toString());
-      cleanData();
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  void cleanData() {
-    setError(null);
-    setReward(null);
   }
 }
