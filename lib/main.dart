@@ -23,6 +23,8 @@ import 'package:learn_lingo/features/Lesson/lesson_provider.dart';
 import 'package:learn_lingo/features/Register/register_page.dart';
 import 'package:learn_lingo/features/Register/register_provider.dart';
 import 'package:learn_lingo/features/Reward/reward_provider.dart';
+import 'package:learn_lingo/features/Search%20Lesson/search_lesson_page.dart';
+import 'package:learn_lingo/features/Search%20Lesson/search_lesson_provider.dart';
 import 'package:learn_lingo/features/Talk-AI/talk_provider.dart';
 import 'package:learn_lingo/features/Verify-OTP/verify_page.dart';
 import 'package:learn_lingo/features/Verify-OTP/verify_provider.dart';
@@ -58,6 +60,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VerifyProvider()),
         ChangeNotifierProvider(create: (_) => GenerateOtpProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
+        ChangeNotifierProvider(create: (_) => SearchLessonProvider()),
       ],
       child: MaterialApp(
         initialRoute: '/',
@@ -77,6 +80,7 @@ class MyApp extends StatelessWidget {
           '/verificationOTP': (context) => const VerifyPage(),
           '/generate-otp': (context) => const GenerateOtpPage(),
           '/forgot-password': (context) => const ForgotPasswordPage(),
+          '/search-lesson': (context) => const SearchLessonPage(),
         },
         debugShowCheckedModeBanner: false,
         home: const AuthCheck(),

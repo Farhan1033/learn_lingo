@@ -67,29 +67,35 @@ class RewardProvider with ChangeNotifier {
       }
     } catch (e) {
       setError(e.toString());
-      cleanData();
+      // cleanData();
     } finally {
       setLoading(false);
     }
   }
 
-  // Redeem reward
-  Future<void> redeem(String jenisReward) async {
+// Redeem reward
+  Future<bool> redeem(String jenisReward) async {
     setLoading(true);
     setError(null);
 
     try {
       final token = await Token().getToken();
       final redeemData = await _redeemModels.redeemReward(
-          token ?? 'Token Not Found!', jenisReward);
-      if (redeemData != null) {
+        token ?? 'Token Not Found!',
+        jenisReward,
+      );
+
+      if (redeemData != null && redeemData.statusCode == 200) {
         setRedeem(redeemData);
+        return true; // Menandakan berhasil
       } else {
-        setError('Failed to redeem reward: No data returned.');
+        setError(redeemData?.message ?? 'Redeem failed: Unknown error.');
+        return false; // Menandakan gagal
       }
     } catch (e) {
       setError(e.toString());
-      cleanData();
+      // cleanData();
+      return false; // Menandakan gagal
     } finally {
       setLoading(false);
     }
@@ -176,32 +182,30 @@ class RewardProvider with ChangeNotifier {
               teksTombol: 'Redeem',
               lebarTombol: double.infinity,
               navigasiTombol: () async {
-                await redeem(title).then((_) {
-                  if (hasError != null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content:
-                            Text(redeemApi?.message ?? 'Redeem successful'),
-                        backgroundColor: Warna.benar,
-                        duration: const Duration(seconds: 5),
-                      ),
-                    );
-                    reward();
-                    Navigator.pop(context);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Not enough points to redeem reward'),
-                        backgroundColor: Warna.salah,
-                        duration: Duration(seconds: 3),
-                      ),
-                    );
-                    reward();
-                    Navigator.pop(context);
-                  }
-                });
+                final isSuccess = await redeem(title);
+                if (isSuccess) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(redeemApi?.message ?? 'Redeem successful'),
+                      backgroundColor: Warna.benar,
+                      duration: const Duration(seconds: 5),
+                    ),
+                  );
+                  reward(); // Memperbarui reward setelah redeem berhasil
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                          hasError ?? 'Not enough points to redeem reward'),
+                      backgroundColor: Warna.salah,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                  Navigator.pop(context);
+                }
               },
-            ),
+            )
           ],
         );
       },

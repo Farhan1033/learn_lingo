@@ -35,117 +35,17 @@ class AnalysisPage extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Consumer<HomeProvider>(
-      builder: (context, homeProvider, _) {
-        if (homeProvider.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (homeProvider.hasError) {
-          return const Center(
-            child: Text('Database not found!'),
-          );
-        }
-        if (homeProvider.gamifikasiApi == null) {
-          return const Center(
-            child: Text('Data progress not found!'),
-          );
-        }
-        final gamifikasi = homeProvider.gamifikasiApi!;
-        return Container(
-          color: Warna.primary3,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
-          child: Column(
-            children: [
-              _buildLevelAndCurrencyRow(
-                  gamifikasi.level!,
-                  (gamifikasi.currentExp! / gamifikasi.nextLevelExp!)
-                      .toDouble(),
-                  gamifikasi.totalPoints!),
-              const SizedBox(
-                height: 30,
-              ),
-              _buildUserProfileRow(),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildLevelAndCurrencyRow(int level, double progress, int poin) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _buildLevelIndicator(level, progress),
-        Row(
-          children: [
-            _buildCurrencyBox(poin),
-            const SizedBox(
-              width: 20,
-            ),
-            _buildNotificationIcon()
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _buildLevelIndicator(int level, double progress) {
     return Container(
-      height: 46,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        color: Warna.primary1,
-      ),
+      color: Warna.primary3,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Tipografi().s2(
-              isiText: 'Level ${level.toString()}', warnaFont: Warna.netral1),
           const SizedBox(
-            height: 5,
+            height: 20,
           ),
-          LinearPercentIndicator(
-            padding: EdgeInsets.zero,
-            barRadius: const Radius.circular(8),
-            lineHeight: 6.0,
-            percent: progress / 100,
-            width: 84,
-            progressColor: Warna.primary4,
-          ),
+          _buildUserProfileRow(),
         ],
       ),
-    );
-  }
-
-  Widget _buildCurrencyBox(int poin) {
-    return Container(
-      height: 46,
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5), color: Colors.white),
-      child: Row(
-        children: [
-          Image.asset('assets/images/Group 137.png'),
-          const SizedBox(
-            width: 5,
-          ),
-          Tipografi().s2(isiText: poin.toString(), warnaFont: Warna.netral1)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotificationIcon() {
-    return Container(
-      height: 44.0,
-      width: 44.0,
-      decoration:
-          const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-      child: const Icon(Icons.notifications, color: Warna.primary3),
     );
   }
 

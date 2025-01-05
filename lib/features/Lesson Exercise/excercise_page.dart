@@ -28,6 +28,7 @@ class _ExcercisePageState extends State<ExcercisePage> {
       if (idExcercise != null) {
         excerciseProv.loadExercise(idExcercise);
       }
+      excerciseProv.gamificationExercise();
     });
   }
 
@@ -42,6 +43,7 @@ class _ExcercisePageState extends State<ExcercisePage> {
       body: Consumer<ExerciseProvider>(
         builder: (context, excerciseProvider, _) {
           final excercise = excerciseProvider.exerciseApi;
+          final gamification = excerciseProvider.gamificationExerciseApi;
           if (excerciseProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -60,6 +62,7 @@ class _ExcercisePageState extends State<ExcercisePage> {
             );
           }
           final dataQuiz = excercise.quiz![excerciseProvider.currentIndex];
+          final helpCount = gamification?.data?.helpCount;
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 32),
@@ -71,14 +74,68 @@ class _ExcercisePageState extends State<ExcercisePage> {
                     children: [
                       _buildStatBox(
                         icon: Icons.favorite,
-                        value: excerciseProvider.exercisePoints.toString(),
+                        value: excerciseProvider.exerciseLife.toString(),
                         color: Warna.salah,
                       ),
                       _buildCountdownTimer(
                         duration: excercise.exerciseDuration ?? 0,
                         onFinished: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Timer is done!')),
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                backgroundColor: Warna.primary1,
+                                content: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Warna.primary1,
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Tipografi().h6(
+                                        isiText: 'Try Again',
+                                        warnaFont: Warna.netral1,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Image.asset(
+                                        'assets/images/Clip path group.png',
+                                        scale: 3,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const Text(
+                                        'Your life runs out, You failed to complete the quiz',
+                                        style: TextStyle(
+                                          color: Warna.netral1,
+                                          fontSize: 16,
+                                          fontFamily: 'Poppins',
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Tombol().primarySmall(
+                                        teksTombol: 'Retry',
+                                        lebarTombol: double.maxFinite,
+                                        navigasiTombol: () {
+                                          Navigator.pop(context);
+                                          excerciseProvider.resetQuiz();
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       ),
@@ -95,64 +152,108 @@ class _ExcercisePageState extends State<ExcercisePage> {
                   const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.bottomRight,
-                    child: Tombol().primaryLarge(
-                        teksTombol: excerciseProvider.currentIndex + 1 <
-                                excerciseProvider.exerciseApi!.quiz!.length
-                            ? "Next"
-                            : "Finish",
-                        lebarTombol: MediaQuery.of(context).size.width * 0.4,
-                        navigasiTombol: excerciseProvider.isAnswerSelected
-                            ? () async {
-                                if (excerciseProvider.currentIndex + 1 <
-                                    excerciseProvider
-                                        .exerciseApi!.quiz!.length) {
-                                  excerciseProvider.nextQuiz();
-                                } else {
-                                  if (excerciseProvider.statusKelulusan ==
-                                      'Tidak Lulus') {
-                                    final idLesson =
-                                        Provider.of<LessonProvider>(context,
-                                            listen: false);
-                                    excerciseProvider.resetQuiz();
-                                    excerciseProvider.saveValue(
-                                        idLesson
-                                            .lessonApi!.exercise!.exerciseId!,
-                                        excerciseProvider.totalGrade!);
-                                    showResultDialog(
-                                        context, excerciseProvider);
-                                  } else {
-                                    final idLesson =
-                                        Provider.of<LessonProvider>(context,
-                                            listen: false);
-                                    final idCourse =
-                                        Provider.of<CourseProvider>(context,
-                                                listen: false)
-                                            .idCourses;
-                                    if (idLesson
-                                            .lessonApi!.exercise!.isCompleted ==
-                                        false) {
-                                      excerciseProvider.resetQuiz();
-                                      await excerciseProvider.saveValue(
-                                          idLesson
-                                              .lessonApi!.exercise!.exerciseId!,
-                                          excerciseProvider.totalGrade!);
-                                      await excerciseProvider.completeExercise(
-                                          idCourse, idLesson.idLesson);
-                                      showResultDialog(
-                                          context, excerciseProvider);
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {},
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Warna.primary1,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                    blurRadius: 2.0,
+                                    offset: const Offset(0, 2),
+                                    spreadRadius: 0.0,
+                                    color: Warna.netral1.withOpacity(0.07)),
+                                BoxShadow(
+                                    blurRadius: 1.0,
+                                    offset: const Offset(0, 3),
+                                    spreadRadius: 0.0,
+                                    color: Warna.netral1.withOpacity(0.06)),
+                                BoxShadow(
+                                    blurRadius: 10.0,
+                                    offset: const Offset(0, 1),
+                                    spreadRadius: 0.0,
+                                    color: Warna.netral1.withOpacity(0.1)),
+                              ],
+                              image: const DecorationImage(
+                                  image:
+                                      AssetImage('assets/images/help_icon.png'),
+                                  scale: 2),
+                            ),
+                            child: Tipografi().C(
+                                isiText: helpCount.toString(),
+                                warnaFont: Warna.primary3),
+                          ),
+                        ),
+                        Tombol().primaryLarge(
+                            teksTombol: excerciseProvider.currentIndex + 1 <
+                                    excerciseProvider.exerciseApi!.quiz!.length
+                                ? "Next"
+                                : "Finish",
+                            lebarTombol:
+                                MediaQuery.of(context).size.width * 0.4,
+                            navigasiTombol: excerciseProvider.isAnswerSelected
+                                ? () async {
+                                    if (excerciseProvider.currentIndex + 1 <
+                                        excerciseProvider
+                                            .exerciseApi!.quiz!.length) {
+                                      excerciseProvider.nextQuiz();
                                     } else {
-                                      excerciseProvider.resetQuiz();
-                                      excerciseProvider.saveValue(
-                                          idLesson
-                                              .lessonApi!.exercise!.exerciseId!,
-                                          excerciseProvider.totalGrade!);
-                                      showResultDialog(
-                                          context, excerciseProvider);
+                                      if (excerciseProvider.statusKelulusan ==
+                                          'Tidak Lulus') {
+                                        final idLesson =
+                                            Provider.of<LessonProvider>(context,
+                                                listen: false);
+                                        excerciseProvider.resetQuiz();
+                                        excerciseProvider.saveValue(
+                                            idLesson.lessonApi!.exercise!
+                                                .exerciseId!,
+                                            excerciseProvider.totalGrade!);
+                                        showResultDialog(
+                                            context, excerciseProvider);
+                                      } else {
+                                        final idLesson =
+                                            Provider.of<LessonProvider>(context,
+                                                listen: false);
+                                        final idCourse =
+                                            Provider.of<CourseProvider>(context,
+                                                    listen: false)
+                                                .idCourses;
+                                        if (idLesson.lessonApi!.exercise!
+                                                .isCompleted ==
+                                            false) {
+                                          excerciseProvider.resetQuiz();
+                                          await excerciseProvider.saveValue(
+                                              idLesson.lessonApi!.exercise!
+                                                  .exerciseId!,
+                                              excerciseProvider.totalGrade!);
+                                          await excerciseProvider
+                                              .completeExercise(
+                                                  idCourse, idLesson.idLesson);
+                                          showResultDialog(
+                                              context, excerciseProvider);
+                                        } else {
+                                          excerciseProvider.resetQuiz();
+                                          excerciseProvider.saveValue(
+                                              idLesson.lessonApi!.exercise!
+                                                  .exerciseId!,
+                                              excerciseProvider.totalGrade!);
+                                          showResultDialog(
+                                              context, excerciseProvider);
+                                        }
+                                      }
                                     }
                                   }
-                                }
-                              }
-                            : CircularProgressIndicator.new),
+                                : CircularProgressIndicator.new),
+                      ],
+                    ),
                   ),
                 ],
               ),

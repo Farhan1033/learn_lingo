@@ -60,24 +60,6 @@ class HomePage extends StatelessWidget {
           );
         },
       ),
-      // floatingActionButton: FloatingActionButton.large(
-      //   highlightElevation: 0,
-      //   hoverColor: Colors.transparent,
-      //   foregroundColor: Colors.transparent,
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   onPressed: () {
-      //     Navigator.pushNamed(context, '/daily-event');
-      //   },
-      //   child: SizedBox(
-      //     height: double.infinity,
-      //     width: double.infinity,
-      //     child: Image.asset(
-      //       'assets/images/Frame 172.png',
-      //       fit: BoxFit.fill,
-      //     ),
-      //   ),
-      // ),
     );
   }
 
@@ -95,7 +77,7 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 36),
       child: Column(
         children: [
-          _buildLevelAndCurrencyRow(level, poin, progress),
+          _buildLevelAndCurrencyRow(context, level, poin, progress),
           const SizedBox(
             height: 30,
           ),
@@ -109,7 +91,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildLevelAndCurrencyRow(String level, String poin, double progress) {
+  Widget _buildLevelAndCurrencyRow(
+      BuildContext context, String level, String poin, double progress) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -118,9 +101,9 @@ class HomePage extends StatelessWidget {
           children: [
             _buildCurrencyBox(poin),
             const SizedBox(
-              width: 20,
+              width: 10,
             ),
-            _buildNotificationIcon()
+            _buildSearchButton(context),
           ],
         )
       ],
@@ -146,7 +129,7 @@ class HomePage extends StatelessWidget {
             padding: EdgeInsets.zero,
             barRadius: const Radius.circular(8),
             lineHeight: 6.0,
-            percent: (progress / 100).clamp(0.0, 1.0),
+            percent: (progress * 100) / 100,
             width: 84,
             progressColor: Warna.primary4,
           ),
@@ -173,14 +156,20 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationIcon() {
-    return Container(
-      height: 44.0,
-      width: 44.0,
-      decoration:
-          const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-      child: const Icon(Icons.notifications, color: Warna.primary3),
-    );
+  Widget _buildSearchButton(BuildContext context) {
+    return IconButton(
+        style: const ButtonStyle(
+            fixedSize: WidgetStatePropertyAll(Size(46, 46)),
+            shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)))),
+            backgroundColor: WidgetStatePropertyAll(Warna.primary1)),
+        onPressed: () {
+          Navigator.pushNamed(context, '/search-lesson');
+        },
+        icon: const Icon(
+          Icons.search_outlined,
+          color: Warna.primary3,
+        ));
   }
 
   Widget _buildUserProfileRow() {
@@ -226,7 +215,7 @@ class HomePage extends StatelessWidget {
         color: Colors.white,
         border: Border.all(
             color: Warna.primary4, width: 2, style: BorderStyle.solid),
-        image: DecorationImage(
+        image: const DecorationImage(
             image: AssetImage("assets/images/profile.png"),
             fit: BoxFit.contain),
       ),
@@ -382,8 +371,8 @@ class HomePage extends StatelessWidget {
           // _buildSearchField(),
           // const SizedBox(height: 30),
           _buildLearningChoices(context),
-          const SizedBox(height: 10),
-          _buildChoiceAI(context),
+          // const SizedBox(height: 10),
+          // _buildChoiceAI(context),
           const SizedBox(height: 30),
           const Text(
             "Recommend For You",
@@ -396,17 +385,6 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
-
-  // Widget _buildSearchField() {
-  //   return TextFormField(
-  //     decoration: InputDecoration(
-  //       hintText: "Mau Belajar Apa Sekarang?",
-  //       hintStyle: const TextStyle(color: Warna.primary3, fontSize: 14.0),
-  //       prefixIcon: const Icon(Icons.search, color: Warna.primary3),
-  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-  //     ),
-  //   );
-  // }
 
   Widget _buildLearningChoices(BuildContext context) {
     return Container(
@@ -447,11 +425,19 @@ class HomePage extends StatelessWidget {
                 Navigator.pushNamed(context, '/speaking');
               }),
               _buildChoiceBox(
-                  context, "assets/images/Group 142.png", "Reading", () {}),
-              _buildChoiceBox(
-                  context, "assets/images/Group 143.png", "Writing", () {}),
-              _buildChoiceBox(
-                  context, "assets/images/Group 144.png", "Listening", () {}),
+                  context, "assets/images/Group 149.png", "Check\nGrammar", () {
+                Navigator.pushNamed(context, '/check-grammar');
+              }),
+              _buildChoiceBox(context, "assets/images/Group 148.png", "Chat AI",
+                  () {
+                Navigator.pushNamed(context, '/chat-ai');
+              }),
+              // _buildChoiceBox(
+              //     context, "assets/images/Group 142.png", "Reading", () {}),
+              // _buildChoiceBox(
+              //     context, "assets/images/Group 143.png", "Writing", () {}),
+              // _buildChoiceBox(
+              //     context, "assets/images/Group 144.png", "Listening", () {}),
             ],
           ),
           const SizedBox(
@@ -462,94 +448,94 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildChoiceAI(BuildContext context) {
-    final List<Map<String, String>> items = [
-      {
-        "image": "assets/images/Group 149.png",
-        "text": "Check\nGrammar",
-      },
-      {
-        "image": "assets/images/Group 148.png",
-        "text": "Chat AI",
-      },
-    ];
+  // Widget _buildChoiceAI(BuildContext context) {
+  //   final List<Map<String, String>> items = [
+  //     {
+  //       "image": "assets/images/Group 149.png",
+  //       "text": "Check\nGrammar",
+  //     },
+  //     {
+  //       "image": "assets/images/Group 148.png",
+  //       "text": "Chat AI",
+  //     },
+  //   ];
 
-    return GridView.builder(
-      padding: const EdgeInsets.only(top: 10),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 3,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return _buildIOnTapNavigatorAI(items, index, () {
-            Navigator.pushNamed(context, '/check-grammar');
-          });
-        } else if (index == 1) {
-          return _buildIOnTapNavigatorAI(items, index, () {
-            Navigator.pushNamed(context, '/chat-ai');
-          });
-        } else {
-          return Container();
-        }
-      },
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-    );
-  }
+  //   return GridView.builder(
+  //     padding: const EdgeInsets.only(top: 10),
+  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 2,
+  //       crossAxisSpacing: 10,
+  //       mainAxisSpacing: 10,
+  //       childAspectRatio: 3,
+  //     ),
+  //     itemCount: items.length,
+  //     itemBuilder: (context, index) {
+  //       if (index == 0) {
+  //         return _buildIOnTapNavigatorAI(items, index, () {
+  //           Navigator.pushNamed(context, '/check-grammar');
+  //         });
+  //       } else if (index == 1) {
+  //         return _buildIOnTapNavigatorAI(items, index, () {
+  //           Navigator.pushNamed(context, '/chat-ai');
+  //         });
+  //       } else {
+  //         return Container();
+  //       }
+  //     },
+  //     shrinkWrap: true,
+  //     physics: const NeverScrollableScrollPhysics(),
+  //   );
+  // }
 
-  GestureDetector _buildIOnTapNavigatorAI(
-      List<Map<String, String>> items, int index, VoidCallback navigatorAI) {
-    return GestureDetector(
-      onTap: navigatorAI,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Warna.primary1,
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 2.0,
-              offset: const Offset(0, 2),
-              spreadRadius: 0.0,
-              color: Warna.netral1.withOpacity(0.07),
-            ),
-            BoxShadow(
-              blurRadius: 1.0,
-              offset: const Offset(0, 3),
-              spreadRadius: 0.0,
-              color: Warna.netral1.withOpacity(0.06),
-            ),
-            BoxShadow(
-              blurRadius: 10.0,
-              offset: const Offset(0, 1),
-              spreadRadius: 0.0,
-              color: Warna.netral1.withOpacity(0.1),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 30,
-              height: 30,
-              child: Image.asset(items[index]["image"]!),
-            ),
-            const SizedBox(
-              width: 5,
-            ),
-            Tipografi().s2(
-              isiText: items[index]["text"]!,
-              warnaFont: Warna.netral1,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // GestureDetector _buildIOnTapNavigatorAI(
+  //     List<Map<String, String>> items, int index, VoidCallback navigatorAI) {
+  //   return GestureDetector(
+  //     onTap: navigatorAI,
+  //     child: Container(
+  //       padding: const EdgeInsets.symmetric(horizontal: 10),
+  //       decoration: BoxDecoration(
+  //         borderRadius: BorderRadius.circular(8),
+  //         color: Warna.primary1,
+  //         boxShadow: [
+  //           BoxShadow(
+  //             blurRadius: 2.0,
+  //             offset: const Offset(0, 2),
+  //             spreadRadius: 0.0,
+  //             color: Warna.netral1.withOpacity(0.07),
+  //           ),
+  //           BoxShadow(
+  //             blurRadius: 1.0,
+  //             offset: const Offset(0, 3),
+  //             spreadRadius: 0.0,
+  //             color: Warna.netral1.withOpacity(0.06),
+  //           ),
+  //           BoxShadow(
+  //             blurRadius: 10.0,
+  //             offset: const Offset(0, 1),
+  //             spreadRadius: 0.0,
+  //             color: Warna.netral1.withOpacity(0.1),
+  //           ),
+  //         ],
+  //       ),
+  //       child: Row(
+  //         children: [
+  //           SizedBox(
+  //             width: 30,
+  //             height: 30,
+  //             child: Image.asset(items[index]["image"]!),
+  //           ),
+  //           const SizedBox(
+  //             width: 5,
+  //           ),
+  //           Tipografi().s2(
+  //             isiText: items[index]["text"]!,
+  //             warnaFont: Warna.netral1,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildChoiceBox(BuildContext context, String imagePath, String label,
       VoidCallback onTap) {

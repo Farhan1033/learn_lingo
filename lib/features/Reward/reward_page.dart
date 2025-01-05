@@ -34,9 +34,6 @@ class RewardPage extends StatelessWidget {
               if (rewardProvider.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
-              if (rewardProvider.hasError != null) {
-                return const Center(child: Text('Database not found!'));
-              }
               if (rewardProvider.rewardApi == null) {
                 return const Center(child: Text('Data not found!'));
               }
@@ -235,7 +232,7 @@ class RewardPage extends StatelessWidget {
                     context,
                     imageItems,
                     item.name ?? '',
-                    item.points ?? 0,
+                    item.points!,
                     item.description ?? '',
                     item.terms ?? '');
                 // ScaffoldMessenger.of(context).showSnackBar(
