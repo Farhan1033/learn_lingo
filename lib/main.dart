@@ -15,6 +15,7 @@ import 'package:learn_lingo/features/Home/home_page.dart';
 import 'package:learn_lingo/features/Home/home_provider.dart';
 import 'package:learn_lingo/features/Lesson%20Exercise/excercise_page.dart';
 import 'package:learn_lingo/features/Lesson%20Exercise/excercise_provider.dart';
+// import 'package:learn_lingo/features/Lesson%20Exercise/help_exercise_provider.dart';
 import 'package:learn_lingo/features/Lesson%20Summary/summary_page.dart';
 import 'package:learn_lingo/features/Lesson%20Summary/summary_provider.dart';
 import 'package:learn_lingo/features/Lesson%20Video/video_page.dart';
@@ -61,6 +62,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GenerateOtpProvider()),
         ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         ChangeNotifierProvider(create: (_) => SearchLessonProvider()),
+        // ChangeNotifierProvider(create: (_) => HelpExerciseProvider())
       ],
       child: MaterialApp(
         initialRoute: '/',

@@ -22,13 +22,19 @@ class _ExcercisePageState extends State<ExcercisePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final idExcercise = ModalRoute.of(context)?.settings.arguments.toString();
-      final excerciseProv =
-          Provider.of<ExerciseProvider>(context, listen: false);
-      if (idExcercise != null) {
-        excerciseProv.loadExercise(idExcercise);
+      // Ambil ID Exercise dari route arguments
+      final idExercise = ModalRoute.of(context)?.settings.arguments as String?;
+
+      if (idExercise == null || idExercise.isEmpty) {
+        return;
       }
-      excerciseProv.gamificationExercise();
+      final exerciseProv =
+          Provider.of<ExerciseProvider>(context, listen: false);
+
+      if (mounted) {
+        exerciseProv.loadExercise(idExercise);
+        exerciseProv.gamificationExercise();
+      }
     });
   }
 
@@ -157,7 +163,32 @@ class _ExcercisePageState extends State<ExcercisePage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () async {
+                            final sisaHelp = excerciseProvider
+                                .helpExerciseApi?.data?.helpCount;
+                            if (helpCount != 0 || sisaHelp != 0) {
+                              await excerciseProvider.helpExercise();
+
+                              excerciseProvider.helpAnswer(context);
+
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content:
+                                    Text("Remaining available help $sisaHelp"),
+                                backgroundColor: Warna.ongoing,
+                                duration: const Duration(seconds: 2),
+                              ));
+
+                              await excerciseProvider.gamificationExercise();
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text("Help has run out"),
+                                backgroundColor: Warna.salah,
+                                duration: Duration(seconds: 2),
+                              ));
+                            }
+                          },
                           child: Container(
                             padding: const EdgeInsets.all(4),
                             width: MediaQuery.of(context).size.width * 0.15,
@@ -187,9 +218,11 @@ class _ExcercisePageState extends State<ExcercisePage> {
                                       AssetImage('assets/images/help_icon.png'),
                                   scale: 2),
                             ),
-                            child: Tipografi().C(
-                                isiText: helpCount.toString(),
-                                warnaFont: Warna.primary3),
+                            // child: Tipografi().C(
+                            //     isiText: excerciseProvider
+                            //         .gamificationExerciseApi!.data!.helpCount
+                            //         .toString(),
+                            //     warnaFont: Warna.primary3),
                           ),
                         ),
                         Tombol().primaryLarge(
@@ -293,7 +326,7 @@ class _ExcercisePageState extends State<ExcercisePage> {
                   warnaFont: Warna.netral1,
                 ),
                 const SizedBox(height: 10),
-                Image.asset('assets/images/Clip path group.png'),
+                Image.asset('assets/images/Clip path group (1).png'),
                 const SizedBox(height: 10),
                 Tipografi().s1(
                   isiText: 'Score: ${exerciseProvider.totalGrade}',

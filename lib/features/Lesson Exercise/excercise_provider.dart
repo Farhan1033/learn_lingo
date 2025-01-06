@@ -1,20 +1,25 @@
 import 'package:learn_lingo/core/models/exercise_api.dart';
 import 'package:learn_lingo/core/models/exercise_detail.dart';
 import 'package:learn_lingo/core/models/gamification_exercise_api.dart';
+import 'package:learn_lingo/core/models/help_exercise_api.dart';
 import 'package:learn_lingo/core/service/event_lesson_models.dart';
 import 'package:learn_lingo/core/service/excercise_models.dart';
 import 'package:learn_lingo/core/service/exercise_detail_models.dart';
 import 'package:flutter/material.dart';
 import 'package:learn_lingo/core/service/gamification_exercise_models.dart';
+import 'package:learn_lingo/core/service/help_exercise_models.dart';
 import 'package:learn_lingo/core/theme/button_app.dart';
 import 'package:learn_lingo/core/theme/color_primary.dart';
 import 'package:learn_lingo/core/theme/typography.dart';
 import 'package:learn_lingo/core/utils/shared_preferences.dart';
 
 class ExerciseProvider with ChangeNotifier {
+  bool _isDialogShown = false;
   bool _isLoading = false;
   String? _errorMessage;
   ExcerciseApi? _exerciseApi;
+  HelpExerciseApi? _helpExerciseApi;
+  final HelpExerciseModels _helpExerciseModels = HelpExerciseModels();
   final ExcerciseModels _exerciseModels = ExcerciseModels();
   ExerciseDetail? _exerciseDetail;
   final ExerciseDetailModels _exerciseDetailModels = ExerciseDetailModels();
@@ -30,6 +35,7 @@ class ExerciseProvider with ChangeNotifier {
       GamificationExerciseModels();
 
   bool get isLoading => _isLoading;
+  HelpExerciseApi? get helpExerciseApi => _helpExerciseApi;
   String? get errorMessage => _errorMessage;
   ExcerciseApi? get exerciseApi => _exerciseApi;
   ExerciseDetail? get exerciseDetail => _exerciseDetail;
@@ -58,10 +64,12 @@ class ExerciseProvider with ChangeNotifier {
 
     if (isCorrect) {
       _gradeExercise += 1;
-      _showSnackBar(context, 'Jawaban Benar!', Warna.benar);
+      _showSnackBar(
+          context, 'Jawaban Benar!', Warna.benar, const Duration(seconds: 1));
     } else {
       _exerciseLife = (_exerciseLife - 1).clamp(0, _exerciseLife);
-      _showSnackBar(context, 'Jawaban Salah. Coba Lagi!', Warna.salah);
+      _showSnackBar(context, 'Jawaban Salah. Coba Lagi!', Warna.salah,
+          const Duration(seconds: 1));
 
       if (_exerciseLife == 0) {
         _showOutOfLivesDialog(context);
@@ -72,7 +80,20 @@ class ExerciseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isDialogShown = false;
+  void helpAnswer(BuildContext context) {
+    _isAnswerSelected = false;
+
+    final currentQuiz = _exerciseApi!.quiz![_currentIndex];
+
+    final selectedAnswerText = currentQuiz.answer![currentQuiz.correctAnswer!];
+
+    _showSnackBar(
+      context,
+      'Selected Answer: $selectedAnswerText',
+      Warna.benar,
+      const Duration(seconds: 3),
+    );
+  }
 
   void _showOutOfLivesDialog(BuildContext context) {
     if (_isDialogShown) return;
@@ -174,6 +195,34 @@ class ExerciseProvider with ChangeNotifier {
     }
   }
 
+  Future<void> helpExercise() async {
+    _setLoadingState(true);
+    _errorMessage = null;
+
+    try {
+      final token = await Token().getToken();
+      if (token == null) {
+        throw Exception('Token tidak ditemukan.');
+      }
+
+      final helpExerciseData =
+          await _helpExerciseModels.helpExerciseModels(token);
+
+      if (helpExerciseData == null) {
+        _errorMessage =
+            'Data exercise berhasil diperbarui tetapi respons kosong.';
+      } else {
+        _helpExerciseApi = helpExerciseData;
+      }
+    } catch (e) {
+      print('Error terjadi: $e');
+      _errorMessage = 'Terjadi kesalahan: ${e.toString()}';
+      cleanData();
+    } finally {
+      _setLoadingState(false);
+    }
+  }
+
   Future<void> loadExercise(String exerciseId) async {
     _setLoadingState(true);
     _errorMessage = null;
@@ -242,13 +291,13 @@ class ExerciseProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void _showSnackBar(
-      BuildContext context, String message, Color backgroundColor) {
+  void _showSnackBar(BuildContext context, String message,
+      Color backgroundColor, Duration duration) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: backgroundColor,
-        duration: const Duration(seconds: 1),
+        duration: duration,
       ),
     );
   }
