@@ -1,4 +1,5 @@
 import 'package:learn_lingo/core/utils/shared_preferences.dart';
+import 'package:learn_lingo/features/About/about_page.dart';
 import 'package:learn_lingo/features/Analysis/analysis_detail_provider.dart';
 import 'package:learn_lingo/features/Chat%20AI/chat_ai_page.dart';
 import 'package:learn_lingo/features/Chat%20AI/chat_ai_provider.dart';
@@ -83,6 +84,7 @@ class MyApp extends StatelessWidget {
           '/generate-otp': (context) => const GenerateOtpPage(),
           '/forgot-password': (context) => const ForgotPasswordPage(),
           '/search-lesson': (context) => const SearchLessonPage(),
+          '/about-page': (context) => const AboutPage(),
         },
         debugShowCheckedModeBanner: false,
         home: const AuthCheck(),

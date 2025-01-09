@@ -51,8 +51,10 @@ class ProfilePage extends StatelessWidget {
                 itemCount: 2,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return _buildPreferencyProfile(
-                        context, 'About', Icons.info, () {});
+                    return _buildPreferencyProfile(context, 'About', Icons.info,
+                        () {
+                      Navigator.pushNamed(context, '/about-page');
+                    });
                   } else if (index == 1) {
                     return _buildPreferencyProfile(
                         context, 'Logout', Icons.logout, () {
