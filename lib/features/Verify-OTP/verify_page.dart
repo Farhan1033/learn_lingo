@@ -22,11 +22,12 @@ class VerifyPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(
-                      width: 178,
-                      height: 57,
+                      width: 100,
+                      height: 100,
                       child: Image(
-                        image: AssetImage("assets/images/LearnLingo.png"),
-                        fit: BoxFit.cover,
+                        image: AssetImage(
+                            "assets/images/465069695_9088934884464160_6872327217032702338_n-removebg-preview.png"),
+                        fit: BoxFit.fill,
                       )),
                   const SizedBox(
                     height: 15,

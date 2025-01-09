@@ -85,7 +85,7 @@ class MyApp extends StatelessWidget {
           '/search-lesson': (context) => const SearchLessonPage(),
         },
         debugShowCheckedModeBanner: false,
-        home: const AuthCheck(),
+        home: const VerifyPage(),
       ),
     );
   }

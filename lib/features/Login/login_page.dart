@@ -1,4 +1,5 @@
 import 'package:learn_lingo/core/theme/color_primary.dart';
+import 'package:learn_lingo/core/theme/typography.dart';
 import 'package:learn_lingo/features/Login/login_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,21 +55,28 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(
-                        width: 178,
-                        height: 57,
+                        width: 100,
+                        height: 100,
                         child: Image(
-                          image: AssetImage("assets/images/LearnLingo.png"),
-                          fit: BoxFit.cover,
+                          image: AssetImage(
+                              "assets/images/465069695_9088934884464160_6872327217032702338_n-removebg-preview.png"),
+                          fit: BoxFit.fill,
                         )),
                     const SizedBox(
                       height: 15,
                     ),
+                    Tipografi().h6(
+                        isiText: "Sign in with email",
+                        warnaFont: Warna.netral1,
+                        textAlign: TextAlign.center),
                     const SizedBox(
-                        width: 178,
-                        child: Image(
-                          image: AssetImage("assets/images/rafiki.png"),
-                          fit: BoxFit.fill,
-                        )),
+                      height: 15,
+                    ),
+                    Tipografi().b1(
+                        isiText:
+                            "Welcome! Please enter your email and password to continue.",
+                        warnaFont: Warna.netral1,
+                        textAlign: TextAlign.center),
                     const SizedBox(
                       height: 15,
                     ),
@@ -104,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                                 context, '/generate-otp');
                           },
                           child: const Text(
-                            "Lupa Password?",
+                            "Forgot Password?",
                             style: TextStyle(
                                 fontFamily: "Poppins",
                                 fontSize: 14,
@@ -150,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
-                          "Belum Punya Akun?",
+                          "Don't Have an Account?",
                           style: TextStyle(
                               fontFamily: "Poppins",
                               fontSize: 14,
@@ -167,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                               style: TextStyle(
                                   fontFamily: "Poppins",
                                   fontSize: 14,
-                                  color: Warna.primary4,
+                                  color: Warna.primary3,
                                   fontWeight: FontWeight.w500),
                             )),
                       ],

@@ -23,21 +23,28 @@ class RegisterPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(
-                      width: 178,
-                      height: 57,
+                      width: 100,
+                      height: 100,
                       child: Image(
-                        image: AssetImage("assets/images/LearnLingo.png"),
-                        fit: BoxFit.cover,
+                        image: AssetImage(
+                            "assets/images/465069695_9088934884464160_6872327217032702338_n-removebg-preview.png"),
+                        fit: BoxFit.fill,
                       )),
                   const SizedBox(
                     height: 15,
                   ),
+                  Tipografi().h6(
+                      isiText: "Sign up with email",
+                      warnaFont: Warna.netral1,
+                      textAlign: TextAlign.center),
                   const SizedBox(
-                      width: 178,
-                      child: Image(
-                        image: AssetImage("assets/images/rafiki2.png"),
-                        fit: BoxFit.fill,
-                      )),
+                    height: 15,
+                  ),
+                  Tipografi().b1(
+                      isiText:
+                          "Create your account and join us on this exciting journey!",
+                      warnaFont: Warna.netral1,
+                      textAlign: TextAlign.center),
                   const SizedBox(
                     height: 15,
                   ),
@@ -45,7 +52,7 @@ class RegisterPage extends StatelessWidget {
                     editingController: registerProvider.namaController,
                     keamanan: false,
                     iconIsi: const Icon(Icons.person),
-                    textIsi: "Nama Lengkap",
+                    textIsi: "Full Name",
                   ),
                   const SizedBox(
                     height: 15,
@@ -79,7 +86,7 @@ class RegisterPage extends StatelessWidget {
                           registerProvider.confPasswordController,
                       keamanan: registerProvider.keamananConfPass,
                       iconIsi: const Icon(Icons.key),
-                      textIsi: "Konfirmasi Password",
+                      textIsi: "Confirm Password",
                       iconBelakang: IconButton(
                           onPressed: () {
                             registerProvider.toggleKeamananConfPass();
@@ -91,7 +98,7 @@ class RegisterPage extends StatelessWidget {
                     height: 15,
                   ),
                   Tombol().primaryLarge(
-                    teksTombol: "Daftar",
+                    teksTombol: "Register",
                     lebarTombol: double.maxFinite,
                     navigasiTombol: () {
                       registerProvider.register(
@@ -108,10 +115,10 @@ class RegisterPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Tipografi().s2(
-                          isiText: "Sudah Punya Akun?",
+                          isiText: "Already have an account?",
                           warnaFont: Warna.netral1),
                       Tombol().TextLarge(
-                        teksTombol: "Masuk",
+                        teksTombol: "Login",
                         lebarTombol: double.infinity,
                         navigasiTombol: () {
                           registerProvider.moveLogin(context);

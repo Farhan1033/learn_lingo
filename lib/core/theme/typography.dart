@@ -12,9 +12,13 @@ class Tipografi {
     );
   }
 
-  Widget h2({required String isiText, required Color warnaFont}) {
+  Widget h2(
+      {required String isiText,
+      required Color warnaFont,
+      TextAlign? textAlign}) {
     return Text(
       isiText,
+      textAlign: textAlign,
       style: TextStyle(
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w300,
@@ -56,12 +60,13 @@ class Tipografi {
     );
   }
 
-  Widget h6({
-    required String isiText,
-    required Color warnaFont,
-  }) {
+  Widget h6(
+      {required String isiText,
+      required Color warnaFont,
+      TextAlign? textAlign}) {
     return Text(
       isiText,
+      textAlign: textAlign,
       style: TextStyle(
           fontFamily: 'Poppins',
           fontWeight: FontWeight.w500,
@@ -108,11 +113,13 @@ class Tipografi {
       {required String isiText,
       required Color warnaFont,
       TextOverflow? oververFlow,
+      TextAlign? textAlign,
       int? maxLines}) {
     return Text(
       isiText,
       overflow: oververFlow,
       maxLines: maxLines,
+      textAlign: textAlign,
       style: TextStyle(
           fontFamily: 'Poppins',
           fontWeight: FontWeight.normal,
